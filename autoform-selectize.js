@@ -88,6 +88,7 @@ AutoForm.addInputType("selectize", {
           items: _.map(opt.options, fetchOpt)
         });
       } else {
+
         context.items.push(fetchOpt(opt));
       }
     });
@@ -177,23 +178,30 @@ var _refreshSelectizeOptions = function (selectize, options) {
   var items = selectize.items;
 
   selectize.clearOptions();
-
+  var isSelected = false;
   _.each(options, function (option) {
     if (option.optgroup) {
       selectize.addOptionGroup(option.optgroup, {label: option.optgroup});
       _.each(option.items, function (groupOption) {
         selectize.addOption({value: groupOption.value, text: groupOption.label, optgroup: option.optgroup});
         if (groupOption.selected) {
+          isSelected = true;
           selectize.addItem(groupOption.value, true);
         }
       });
     } else if (option.value) {
+
       selectize.addOption({value: option.value, text: option.label});
       if (option.selected) {
+        isSelected = true;
         selectize.addItem(option.value, true);
       }
     }
   });
+
+  if (options.length && ! selectize.isOpen && !isSelected ) {
+    selectize.open();
+  }
 
   _.each(items, function (item) {
     selectize.addItem(item, true);
